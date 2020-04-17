@@ -15,4 +15,4 @@ moudule.exports = {
             return 'Hello world!';
         },
     }
-}
+};
