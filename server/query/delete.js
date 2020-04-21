@@ -3,8 +3,8 @@ const User = require('../model/User');
 
 module.exports = {
 
-    deleteUser: uuid => {
-        return User.findByIdAndDelete(uuid);
+    deleteUser: _id => {
+        return User.findByIdAndDelete(_id);
     }
 
 };

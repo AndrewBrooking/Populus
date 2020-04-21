@@ -1,16 +1,14 @@
 const {
     GraphQLSchema,
     GraphQLObjectType,
-    GraphQLInputObjectType,
     GraphQLString,
-    GraphQLList,
     GraphQLNonNull
 } = require('graphql');
 
-const User = require('./model/User');
+const queries = require('./query/index');
 
 // Construct a Link GraphQL Type
-const LinkType = new GraphQLInputObjectType({
+const LinkType = new GraphQLObjectType({
     name: 'Link',
     fields: {
         title: { type: new GraphQLNonNull(GraphQLString) },
@@ -36,9 +34,9 @@ const RootQuery = new GraphQLObjectType({
     fields: {
         getUser: {
             type: UserType,
-            args: { uuid: { type: GraphQLString } },
+            args: { _id: { type: new GraphQLNonNull(GraphQLString) } },
             resolve(parent, args) {
-                return User.findById(uuid);
+                return queries.read.getUser(args._id).then(user => user);
             }
         }
     }
@@ -48,7 +46,9 @@ const RootQuery = new GraphQLObjectType({
 const RootMutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        createUser: {
+
+        // Registers a new user
+        register: {
             type: UserType,
             args: {
                 email: { type: new GraphQLNonNull(GraphQLString) },
@@ -59,15 +59,46 @@ const RootMutation = new GraphQLObjectType({
                 // links: { type: new GraphQLList(LinkType) }
             },
             resolve(parent, args) {
-                let user = new User({
-                    email: args.email,
-                    username: args.username,
-                    password: args.password,
-                    photo: args.photo,
-                    description: args.description,
-                    links: []
-                });
-                return user.save();
+                return queries.create.registerUser(args).then(user => user);
+            }
+        },
+
+        updateUser: {
+            type: UserType,
+            args: {
+                _id: { type: new GraphQLNonNull(GraphQLString) },
+                username: { type: GraphQLString },
+                oldPassword: { type: GraphQLString },
+                newPassword: { type: GraphQLString },
+                photo: { type: GraphQLString },
+                description: { type: GraphQLString }
+            },
+            resolve(parent, args) {
+                if (args.username) {
+                    return queries.update.updateUsername(args._id, args.username).then(user => user);
+                }
+
+                if (args.oldPassword && args.newPassword) {
+                    return queries.update.updatePassword(args._id, args.oldPassword, args.newPassword).then(user => user);
+                }
+
+                if (args.photo) {
+                    return queries.update.updatePhoto(args._id, args.photo).then(user => user);
+                }
+
+                if (args.description) {
+                    return queries.update.updateDescription(args._id, args.description).then(user => user);
+                }
+            }
+        },
+
+        deleteUser: {
+            type: UserType,
+            args: {
+                _id: {type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                return queries.delete.deleteUser(args._id).then(user => user);
             }
         }
     }

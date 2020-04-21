@@ -7,8 +7,8 @@ module.exports = {
         return User.findOne({ username }).select('password');
     },
 
-    getUser: uuid => {
-        return User.findById(uuid);
+    getUser: _id => {
+        return User.findById(_id);
     }
 
 };
