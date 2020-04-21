@@ -1,10 +1,10 @@
 // Import database/models
-const db = require('../model/index');
+const User = require('../model/User');
 
 module.exports = {
 
     registerUser: data => {
-        return db.User.create({
+        return User.create({
             email: data.email,
             username: data.username,
             password: data.password,

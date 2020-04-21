@@ -1,10 +1,10 @@
 // Import database/models
-const db = require('../model/index');
+const User = require('../model/User');
 
 module.exports = {
 
     deleteUser: uuid => {
-        return db.User.findByIdAndDelete(uuid);
+        return User.findByIdAndDelete(uuid);
     }
 
 };

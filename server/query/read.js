@@ -1,14 +1,14 @@
 // Import database/models
-const db = require('../model/index');
+const User = require('../model/User');
 
 module.exports = {
 
     getPassword: username => {
-        return db.User.findOne({ username }).select('password');
+        return User.findOne({ username }).select('password');
     },
 
     getUser: uuid => {
-        return db.User.findById(uuid);
+        return User.findById(uuid);
     }
 
 };

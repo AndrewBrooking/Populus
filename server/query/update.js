@@ -1,10 +1,10 @@
 // Import database/models
-const db = require('../model/index');
+const User = require('../model/User');
 
 module.exports = {
 
     updateUsername: (uuid, username) => {
-        return db.User.findByIdAndUpdate(uuid, {
+        return User.findByIdAndUpdate(uuid, {
             $set: {
                 username
             }
@@ -12,7 +12,7 @@ module.exports = {
     },
 
     updatePassword: (uuid, password) => {
-        return db.User.findByIdAndUpdate(uuid, {
+        return User.findByIdAndUpdate(uuid, {
             $set: {
                 password
             }
@@ -20,7 +20,7 @@ module.exports = {
     },
 
     updatePhoto: (uuid, photo) => {
-        return db.User.findByIdAndUpdate(uuid, {
+        return User.findByIdAndUpdate(uuid, {
             $set: {
                 photo
             }
@@ -28,7 +28,7 @@ module.exports = {
     },
 
     updateDescription: (uuid, description) => {
-        return db.User.findByIdAndUpdate(uuid, {
+        return User.findByIdAndUpdate(uuid, {
             $set: {
                 description
             }
@@ -36,7 +36,7 @@ module.exports = {
     },
 
     updateLinks: (uuid, links) => {
-        return db.User.findByIdAndUpdate(uuid, {
+        return User.findByIdAndUpdate(uuid, {
             $set: {
                 links
             }

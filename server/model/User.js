@@ -1,11 +1,12 @@
 // Import mongoose
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Define model fields and types
 const UserSchema = new mongoose.Schema({
     email: {
         type: String,
-        unique: true
+        unique: true,
+        select: false
     },
     username: {
         type: String,
@@ -32,7 +33,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Create model using schema
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 // Export model
 module.exports = User;
