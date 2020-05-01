@@ -1,49 +1,16 @@
 const {
-    GraphQLSchema,
     GraphQLObjectType,
     GraphQLString,
-    GraphQLNonNull
+    GraphQLNonNull,
+    GraphQLList
 } = require('graphql');
 
-const queries = require('./query/index');
-
-// Construct a Link GraphQL Type
-const LinkType = new GraphQLObjectType({
-    name: 'Link',
-    fields: {
-        title: { type: new GraphQLNonNull(GraphQLString) },
-        url: { type: new GraphQLNonNull(GraphQLString) }
-    }
-});
-
-// Construct a User GraphQL Type
-const UserType = new GraphQLObjectType({
-    name: 'User',
-    fields: {
-        _id: { type: new GraphQLNonNull(GraphQLString) },
-        username: { type: new GraphQLNonNull(GraphQLString) },
-        photo: { type: new GraphQLNonNull(GraphQLString) },
-        description: { type: new GraphQLNonNull(GraphQLString) },
-        // links: { type: new GraphQLList(LinkType) }
-    }
-});
-
-// Construct a GraphQL Type for queries
-const RootQuery = new GraphQLObjectType({
-    name: 'RootQueryType',
-    fields: {
-        getUser: {
-            type: UserType,
-            args: { _id: { type: new GraphQLNonNull(GraphQLString) } },
-            resolve(parent, args) {
-                return queries.read.getUser(args._id).then(user => user);
-            }
-        }
-    }
-});
+const LinkType = require('./LinkType');
+const UserType = require('./UserType');
+const queries = require('../query/index');
 
 // Construct a GraphQL Type for mutations
-const RootMutation = new GraphQLObjectType({
+module.exports = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
 
@@ -56,13 +23,14 @@ const RootMutation = new GraphQLObjectType({
                 password: { type: new GraphQLNonNull(GraphQLString) },
                 photo: { type: new GraphQLNonNull(GraphQLString) },
                 description: { type: new GraphQLNonNull(GraphQLString) },
-                // links: { type: new GraphQLList(LinkType) }
+                links: { type: new GraphQLNonnull(new GraphQLList(LinkType)) }
             },
             resolve(parent, args) {
                 return queries.create.registerUser(args).then(user => user);
             }
         },
 
+        // Updates a user's information
         updateUser: {
             type: UserType,
             args: {
@@ -71,7 +39,8 @@ const RootMutation = new GraphQLObjectType({
                 oldPassword: { type: GraphQLString },
                 newPassword: { type: GraphQLString },
                 photo: { type: GraphQLString },
-                description: { type: GraphQLString }
+                description: { type: GraphQLString },
+                links: { type: new GraphQLList(LinkType) }
             },
             resolve(parent, args) {
                 if (args.username) {
@@ -89,9 +58,14 @@ const RootMutation = new GraphQLObjectType({
                 if (args.description) {
                     return queries.update.updateDescription(args._id, args.description).then(user => user);
                 }
+
+                if (args.links) {
+                    return queries.update.updateLinks(args._id, args.links).then(user => user);
+                }
             }
         },
 
+        // Remove a user permanently
         deleteUser: {
             type: UserType,
             args: {
@@ -102,10 +76,4 @@ const RootMutation = new GraphQLObjectType({
             }
         }
     }
-});
-
-// Construct and export schema
-module.exports = new GraphQLSchema({
-    query: RootQuery,
-    mutation: RootMutation
 });

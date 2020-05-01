@@ -51,6 +51,15 @@ module.exports = {
                 description
             }
         });
+    },
+
+    // Update a user's links
+    updateLinks: (_id, links) => {
+        return User.findByIdAndUpdate(_id, {
+            $set: {
+                links
+            }
+        });
     }
 
 };

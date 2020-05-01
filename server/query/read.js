@@ -9,6 +9,10 @@ module.exports = {
 
     getUser: _id => {
         return User.findById(_id);
+    },
+
+    getUsers: () => {
+        return User.find();
     }
 
 };
